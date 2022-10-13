@@ -14,7 +14,21 @@ function App() {
 
   const [titleList, setTitleList] = useState(["aaa", "bbb", "ccc"]);
 
-  const [like, setLike] = useState(0);
+  const [modal, setModal] = useState(false);
+
+  const [modalTitle, setModalTitle] = useState("");
+
+  // const;
+
+  // [1, 2, 3].map((el) => {
+  //   console.log(el);
+  //   return "11111";
+  // });
+
+  const onClickTitle = (event: any) => {
+    console.log(event.target.innerText);
+    setModalTitle(event.target.innerText);
+  };
 
   return (
     <div className="App">
@@ -86,8 +100,8 @@ function App() {
             👩‍🦰
           </span>
           {title[0]}
-          <span onClick={() => setLike(like + 1)}>👍</span>
-          {like}
+          {/* <span onClick={() => setLike(like + 1)}>👍</span> */}
+          {/* {like} */}
         </h4>
         <p>10월 11일 발행</p>
       </div>
@@ -97,9 +111,19 @@ function App() {
         <p>10월 11일 발행</p>
       </div>
 
+      {title.map((el, idx) => {
+        return (
+          <div key={idx}>
+            <span onClick={onClickTitle}>{el}</span>
+            <Like />
+            {/* <div>{idx}</div> */}
+          </div>
+        );
+      })}
+
       <div className="list">
-        <h4>{title[2]}</h4>
-        <p>10월 11일 발행</p>
+        <h4 onClick={() => setModal((prev) => !prev)}>{title[2]}</h4>
+        <p>10월 11일 발행!!</p>
       </div>
 
       {/* 윤정님 ver. */}
@@ -109,8 +133,53 @@ function App() {
           <p>10월 11일 발행</p>
         </div>
       ))}
+
+      {/* 컴포넌트 만들면 좋은 경우 */}
+      {/* 1. 반복적인 html 축약 */}
+      {/* 2. 큰 페이지들 */}
+      {/* 3. 자주 변경되는 것들 */}
+      {/* 함수 컴포넌트는 함수 스코프를 갖기 때문에 변수 범위가 함수 내부로 정해짐. 그래서 프롭스를 쓰는 것! */}
+      {/* <Modal /> */}
+
+      {/* 1. html, css로 미리 디자인 완성 */}
+      {/* 2. ui 현재 상태를 스테이트로 저장 */}
+      {/* 3. 스테이트에 따라 ui가 어떻게 보일지 작성 */}
+      {modal ? <Modal title={title} modalTitle={modalTitle} /> : <></>}
     </div>
   );
 }
+
+const Like = () => {
+  const [like, setLike] = useState(0);
+  return (
+    <>
+      <div onClick={() => setLike((prev) => prev + 1)}>👍</div>
+      <div>{like}</div>
+    </>
+  );
+};
+
+interface IModalProps {
+  title: String[];
+  modalTitle: String;
+}
+
+const Modal = (props: IModalProps) => {
+  const [title, setTitle] = useState(props.title[0]);
+
+  const onClickChangeTitle = () => {
+    setTitle("여자 코트 추천");
+  };
+
+  return (
+    <div className="modal">
+      <h4>{title}</h4>
+      <p>날짜</p>
+      <p>상세내용</p>
+      <button onClick={onClickChangeTitle}>글 수정</button>
+      <div>{props.modalTitle}</div>
+    </div>
+  );
+};
 
 export default App;
