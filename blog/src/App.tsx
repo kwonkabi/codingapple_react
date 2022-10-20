@@ -2,149 +2,62 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
-  // 데이터 바인딩
-  // let post = "강남 우동 맛집";
-
-  // destructuring 문법
   const [title, setTitle] = useState([
-    "남자 코트 추천",
-    "운동화 추천",
-    "가나다 독학",
+    { title: "남자 코트 추천", createdAt: "2022,10,01", like: 0 },
+    { title: "운동화 추천", createdAt: "2022,10,01", like: 0 },
+    { title: "가나다 독학", createdAt: "2022,10,01", like: 0 },
+    { title: "햄버거", createdAt: "2022,10,01", like: 0 },
+    { title: "피자", createdAt: "2022,10,01", like: 0 },
   ]);
 
-  const [titleList, setTitleList] = useState(["aaa", "bbb", "ccc"]);
+  const [input, setInput] = useState("");
 
-  const [modal, setModal] = useState(false);
+  const onClickDelete = (idx: number) => {
+    const copy = [...title];
+    copy.splice(idx, 1);
+    setTitle(copy);
+  };
 
-  const [modalTitle, setModalTitle] = useState("");
-
-  // const;
-
-  // [1, 2, 3].map((el) => {
-  //   console.log(el);
-  //   return "11111";
-  // });
-
-  const onClickTitle = (event: any) => {
-    console.log(event.target.innerText);
-    setModalTitle(event.target.innerText);
+  const onClickSubmit = () => {
+    if (!input) return;
+    const date = String(new Date());
+    const copy = [...title];
+    copy.unshift({ title: input, createdAt: date, like: 0 });
+    setTitle(copy);
   };
 
   return (
     <div className="App">
       <div>
         <h1 className="title">블로그다</h1>
-        {/* <h2 id={post} style={{ color: "blue" }}>
-          블로그 글 제목: {post}
-        </h2> */}
       </div>
-
+      <input
+        onChange={(e) => {
+          setInput(e.target.value);
+        }}
+      />
+      <button onClick={onClickSubmit}>??</button>
       <div
         onClick={() => {
           const copy = [...title];
           const sortedTitle = copy.sort();
-          // console.log(sortedTitle);
           setTitle(sortedTitle);
         }}
       >
         🔠
       </div>
 
-      {/* 윤정님 ver.1 */}
-      <div
-        onClick={() => {
-          setTitle((prev) => {
-            const copy = [...prev];
-            copy.sort();
-            return copy;
-          });
-        }}
-      >
-        🔠
-      </div>
-      {/* 윤정님 ver.2 */}
-      <div
-        onClick={() => {
-          setTitle(() => {
-            const copy = [...title];
-            copy.sort();
-            return copy;
-          });
-        }}
-      >
-        🔠
-      </div>
-
-      <div className="list">
-        <h4>
-          <span
-            onClick={
-              () => {
-                // let copy = title;
-                // 얕은 복사 시, 같은 메모리 주소를 참조하기 때문에 같다고 인식하여 리렌더 발생하지 않음 (콘솔에서 ==로 비교해보면 같다고 나옴!)
-                const copy = [...title]; // => 깊은 복사 해줘서 사본 만들어주기!
-                copy[0] = "여자 코트 추천";
-                setTitle(copy);
-
-                // 🔽 원본 직접 수정하는 방법
-                // title[0] = "웅앵,ㅇ,";
-                // setTitle(title);
-                // console.log(title);
-              }
-
-              // setTitle(["여자 코트 추천", "운동화 추천", "자바스크립트 독학"])
-              // 🔽 이렇게 하면 누를 때마다 배열 맨 앞에 '여자 코트 추천' 추가됨
-              // setTitle((prev) => ["여자 코트 추천", ...prev])
-            }
-          >
-            👩‍🦰
-          </span>
-          {title[0]}
-          {/* <span onClick={() => setLike(like + 1)}>👍</span> */}
-          {/* {like} */}
-        </h4>
-        <p>10월 11일 발행</p>
-      </div>
-
-      <div className="list">
-        <h4>{title[1]}</h4>
-        <p>10월 11일 발행</p>
-      </div>
-
       {title.map((el, idx) => {
         return (
-          <div key={idx}>
-            <span onClick={onClickTitle}>{el}</span>
+          // key는 중복되는 값이나 idx가 들어가면 안 됨!
+          <div key={el.title}>
+            <span>{el.title}</span>
+            <button onClick={() => onClickDelete(idx)}>삭제</button>
+            <span>{`${new Date(el.createdAt)}`}</span>
             <Like />
-            {/* <div>{idx}</div> */}
           </div>
         );
       })}
-
-      <div className="list">
-        <h4 onClick={() => setModal((prev) => !prev)}>{title[2]}</h4>
-        <p>10월 11일 발행!!</p>
-      </div>
-
-      {/* 윤정님 ver. */}
-      {titleList.map((content, idx) => (
-        <div key={content + idx} className="list">
-          <h4>{content}</h4>
-          <p>10월 11일 발행</p>
-        </div>
-      ))}
-
-      {/* 컴포넌트 만들면 좋은 경우 */}
-      {/* 1. 반복적인 html 축약 */}
-      {/* 2. 큰 페이지들 */}
-      {/* 3. 자주 변경되는 것들 */}
-      {/* 함수 컴포넌트는 함수 스코프를 갖기 때문에 변수 범위가 함수 내부로 정해짐. 그래서 프롭스를 쓰는 것! */}
-      {/* <Modal /> */}
-
-      {/* 1. html, css로 미리 디자인 완성 */}
-      {/* 2. ui 현재 상태를 스테이트로 저장 */}
-      {/* 3. 스테이트에 따라 ui가 어떻게 보일지 작성 */}
-      {modal ? <Modal title={title} modalTitle={modalTitle} /> : <></>}
     </div>
   );
 }
@@ -153,33 +66,138 @@ const Like = () => {
   const [like, setLike] = useState(0);
   return (
     <>
-      <div onClick={() => setLike((prev) => prev + 1)}>👍</div>
-      <div>{like}</div>
+      <div onClick={() => setLike(like + 1)}>👍</div>
+      <div style={{ borderBottom: "1px solid gray" }}>{like}</div>
     </>
   );
 };
 
-interface IModalProps {
-  title: String[];
-  modalTitle: String;
-}
-
-const Modal = (props: IModalProps) => {
-  const [title, setTitle] = useState(props.title[0]);
-
-  const onClickChangeTitle = () => {
-    setTitle("여자 코트 추천");
-  };
-
-  return (
-    <div className="modal">
-      <h4>{title}</h4>
-      <p>날짜</p>
-      <p>상세내용</p>
-      <button onClick={onClickChangeTitle}>글 수정</button>
-      <div>{props.modalTitle}</div>
-    </div>
-  );
-};
-
 export default App;
+
+// import React, { useState } from "react";
+// import "./App.css";
+// function App() {
+//   let title = "왕 나도 리액트 공부한다.";
+//   let [contentList, setContentList] = useState([
+//     { title: "나는 최윤정", createdAt: "2022,10,17" },
+//     { title: "유후유후", createdAt: "2022,10,17" },
+//     { title: "가나초코렡", createdAt: "2022,10,17" },
+//   ]);
+//   let [isModalOpen, setIsModalOpen] = useState(false);
+//   let [selectedContentIndex, setSelectedContentIndex] = useState<number | null>(
+//     null
+//   );
+//   let [newContent, setNewContent] = useState("");
+
+//   function onClickEditContent() {
+//     // let copy = [...contentList];
+//     // copy[0] = "나는 최윤정, who is hungry";
+//     // setContentList(copy);
+//     setContentList((prev) => {
+//       if (selectedContentIndex === null) {
+//         return prev;
+//       }
+//       const copy = [...prev];
+//       copy[selectedContentIndex].title = `who is hungry`;
+//       return copy;
+//     });
+//   }
+//   function onClickSort() {
+//     setContentList((prev) => {
+//       const copy = [...prev];
+//       copy.sort();
+//       return copy;
+//     });
+//   }
+//   function onClickContent(index: number) {
+//     setIsModalOpen(!isModalOpen);
+//     setSelectedContentIndex(index);
+//   }
+//   function onChangeInput(e: React.ChangeEvent<HTMLInputElement>) {
+//     setNewContent(e.target.value);
+//   }
+//   function onClickAddContent() {
+//     if (newContent) {
+//       setContentList((prev) => {
+//         const copy = [...prev];
+//         copy.unshift({ title: newContent, createdAt: new Date().toString() });
+//         return copy;
+//       });
+//       setNewContent("");
+//     }
+//   }
+//   function onClickDeleteContent(targetIndex: number) {
+//     setContentList((prev) => {
+//       const copy = [...prev];
+//       copy.splice(targetIndex, 1);
+//       return copy;
+//     });
+//   }
+//   return (
+//     <div className="App">
+//       <div className="black-nav">
+//         <h4 id={title}>{title}</h4>
+//       </div>
+//       <button onClick={onClickSort}>가나다순정렬</button>
+//       {/* <div className="item">
+//         <h4 style={{ color: "crimson" }} onClick={onClickContent}>
+//           {contentList[0]}
+//           <span onClick={onClickLike}>:+1:{like}</span>
+//         </h4>
+//         <p>{`${new Date()} 발행`}</p>
+//       </div> */}
+//       {contentList.map((content, index) => (
+//         <div key={content.title} className="item">
+//           <h4
+//             style={{ color: "crimson" }}
+//             onClick={() => onClickContent(index)}
+//           >
+//             {content.title}
+//           </h4>
+//           <Like />
+//           <p>{`${new Date(content.createdAt)} 발행`}</p>
+//           <button onClick={() => onClickDeleteContent(index)}>삭제</button>
+//         </div>
+//       ))}
+//       <input value={newContent} onChange={onChangeInput} />
+//       <button onClick={onClickAddContent}>콘텐츠 추가</button>
+//       {isModalOpen && (
+//         <Modal
+//           content={
+//             selectedContentIndex !== null
+//               ? contentList[selectedContentIndex]
+//               : undefined
+//           }
+//           onClickEditContent={onClickEditContent}
+//         />
+//       )}
+//     </div>
+//   );
+// }
+
+// function Like() {
+//   let [like, setLike] = useState(0);
+
+//   function onClickLike() {
+//     setLike(like + 1);
+//   }
+//   return <span onClick={onClickLike}>:+1:{like}</span>;
+// }
+
+// function Modal(props: {
+//   content?: { title: string; createdAt: string };
+//   onClickEditContent: () => void;
+// }) {
+//   if (!props.content) {
+//     return null;
+//   }
+//   return (
+//     <div className="modal">
+//       <h4>{props.content.title}</h4>
+//       <p>{`날짜: ${new Date(props.content.createdAt)}`}</p>
+//       <p>상세내용</p>
+//       <button onClick={props.onClickEditContent}>글수정</button>
+//     </div>
+//   );
+// }
+// export default App;
